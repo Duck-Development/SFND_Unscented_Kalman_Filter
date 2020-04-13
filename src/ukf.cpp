@@ -1,5 +1,6 @@
 #include "ukf.h"
 #include "Eigen/Dense"
+#include <iostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -54,15 +55,39 @@ UKF::UKF() {
    * TODO: Complete the initialization. See ukf.h for other member properties.
    * Hint: one or more values initialized above might be wildly off...
    */
+
+
+
 }
 
 UKF::~UKF() {}
 
 void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
-  /**
-   * TODO: Complete this function! Make sure you switch between lidar and radar
-   * measurements.
-   */
+   if (is_initialized_)
+   {
+     long long dt = meas_package.timestamp_ - time_us_;
+    this->Prediction(dt);
+    switch (meas_package.sensor_type_)
+    {
+    case MeasurementPackage::LASER:
+      this->UpdateLidar(meas_package);
+      break;
+    case  MeasurementPackage::RADAR:
+      this->UpdateRadar(meas_package);
+      break;
+
+    default:
+     std::cout << " get unsuported sensor Type data: "  <<  meas_package.sensor_type_ << std::endl;
+     exit(-1);
+      break;
+    }
+    time_us_ = meas_package.timestamp_;
+
+   } else // Init Filter 
+   {
+    this->is_initialized_ = true;
+    time_us_ = meas_package.timestamp_;
+   }
 }
 
 void UKF::Prediction(double delta_t) {
