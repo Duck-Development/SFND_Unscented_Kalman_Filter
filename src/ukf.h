@@ -53,12 +53,16 @@ class UKF {
 
   // state vector: [pos1 pos2 vel_abs yaw_angle yaw_rate] in SI units and rad
   Eigen::VectorXd x_;
-
   // state covariance matrix
   Eigen::MatrixXd P_;
 
+  Eigen::MatrixXd R_Laser;
+  Eigen::MatrixXd R_Radar;
+
   // predicted sigma points matrix
   Eigen::MatrixXd Xsig_pred_;
+
+
 
   // time when the state is true, in us
   long long time_us_;
@@ -92,6 +96,8 @@ class UKF {
 
   // Augmented state dimension
   int n_aug_;
+
+  int sigmaSize_ ;
 
   // Sigma point spreading parameter
   double lambda_;
